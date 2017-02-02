@@ -1,31 +1,70 @@
 $fa=0.5;
 $fn=180;
 
-driveshaft_h=50;
-driveshaft_od=4;
-bell_od=40;
-bell_h=15;
-bell_wall=1;
-bell_ceil=1;
-driveshaft_behind_bell=10;
-mount_od=40;
-mount_height=8;
-mount_thick=1;
-mount_wall=2;
-static_shaft_od=6;
 
-test();
+fullmotor(
+    driveshaft_h=50,
+    driveshaft_od=4,
+    bell_od=40,
+    bell_h=15,
+    bell_wall=1,
+    bell_ceil=1,
+    driveshaft_behind_bell=10,
+    
+    static_shaft_od=6,
+    
+    mount_od=40,
+    mount_height=8,
+    mount_thick=1,
+    mount_wall=2
+);
 
-module test(){
+module fullmotor(
+    driveshaft_h=50,//total length of driveshaft
+    driveshaft_od=4,
+    bell_od=40,
+    bell_h=15,
+    bell_wall=1,//wall thickness of bell
+    bell_ceil=1,//thickness of the bell top
+    driveshaft_behind_bell=10,//protrusion behind bell
+    
+    static_shaft_od=6,
+    
+    mount_od=40,
+    mount_height=8,
+    mount_thick=1,
+    mount_wall=2
+){
     color("red")
-        bell();
+        bell(driveshaft_h=driveshaft_h,
+             driveshaft_od=driveshaft_od,
+             bell_od=bell_od,
+             bell_h=bell_h,
+             bell_wall=bell_wall,
+             bell_ceil=bell_ceil,
+             driveshaft_behind_bell=driveshaft_behind_bell
+            );
     color("yellow")
-        stator();
+        stator(
+                bell_od=bell_od,
+                bell_wall=bell_wall,
+                bell_ceil=bell_ceil,
+                bell_h=bell_h,
+                driveshaft_od=driveshaft_od,
+                driveshaft_behind_bell=driveshaft_behind_bell,
+                static_shaft_od=static_shaft_od
+            );
     color("blue")
-        mount();
+        mount(
+                driveshaft_behind_bell=driveshaft_behind_bell,
+                mount_height=mount_height,
+                mount_od=mount_od,
+                mount_wall=mount_wall,
+                mount_thick=mount_thick,
+                static_shaft_od=static_shaft_od);
 }
 
-module bell(){
+module bell(driveshaft_h, driveshaft_od, bell_od, bell_h, bell_ceil, driveshaft_behind_bell){
     intersection(){
         difference() {
             cylinder(h=bell_h, r=bell_od/2);
@@ -44,7 +83,7 @@ module bell(){
         cylinder(h=driveshaft_h, r=driveshaft_od/2); //driveshaft
     }
 }
-module stator(){
+module stator(bell_od, bell_wall, bell_ceil, bell_h, driveshaft_od, driveshaft_behind_bell, static_shaft_od){
     for(x=[0:7])
         rotate([0,0,360/8*x])
             translate([-1,0,0])
@@ -58,7 +97,7 @@ module stator(){
         }
 }
  
-module mount(){
+module mount(driveshaft_behind_bell,mount_height,mount_od,mount_wall,mount_thick,static_shaft_od){
         translate([0,0,-driveshaft_behind_bell]){
             difference(){
                 cylinder(h=mount_height,r=mount_od/2);
