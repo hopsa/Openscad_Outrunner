@@ -14,50 +14,51 @@ mount_thick=1;
 mount_wall=2;
 static_shaft_od=6;
 
+test();
 
+module test(){
+    color("red")
+        bell();
+    color("yellow")
+        stator();
+    color("blue")
+        mount();
+}
 
-
-show_bell=true;
-show_stator=true;
-show_mount=true;
-
-if(show_bell)
-    color("red"){
-        intersection(){
-            difference() {
-                cylinder(h=bell_h, r=bell_od/2);
-                   translate([0,0,-1])
-                        cylinder(h=bell_h, r=bell_od/2-bell_wall);
-                for (x=[0:5])
-                    rotate([0,0,360/6*x])
-                        translate([10,0,-5])
-                            cylinder(h=30,r=4);
-            }
-            translate([0,0,-100+bell_h+bell_od/2-(bell_wall+bell_ceil)/2])
-                cylinder(h=100,r1=100,r2=0);
-            
+module bell(){
+    intersection(){
+        difference() {
+            cylinder(h=bell_h, r=bell_od/2);
+               translate([0,0,-1])
+                    cylinder(h=bell_h, r=bell_od/2-bell_wall);
+            for (x=[0:5])
+                rotate([0,0,360/6*x])
+                    translate([10,0,-5])
+                        cylinder(h=30,r=4);
         }
-        translate([0,0,-driveshaft_behind_bell]){
-            cylinder(h=driveshaft_h, r=driveshaft_od/2); //driveshaft
-        }
+        translate([0,0,-100+bell_h+bell_od/2-(bell_wall+bell_ceil)/2])
+            cylinder(h=100,r1=100,r2=0);
+        
     }
-if(show_stator)
-    color("yellow"){
-        for(x=[0:7])
-            rotate([0,0,360/8*x])
-                translate([-1,0,0])
-                    cube([2,bell_od/2-bell_wall-1,10]);
-        translate([0,0,-driveshaft_behind_bell])
-            difference(){
-                hstatic=driveshaft_behind_bell+bell_h-bell_ceil;
-                cylinder(h=hstatic, r=static_shaft_od/2);
-                translate([0,0,-1])
-                    cylinder(h=hstatic+2,r=driveshaft_od/2);
-            }
+    translate([0,0,-driveshaft_behind_bell]){
+        cylinder(h=driveshaft_h, r=driveshaft_od/2); //driveshaft
+    }
+}
+module stator(){
+    for(x=[0:7])
+        rotate([0,0,360/8*x])
+            translate([-1,0,0])
+                cube([2,bell_od/2-bell_wall-1,10]);
+    translate([0,0,-driveshaft_behind_bell])
+        difference(){
+            hstatic=driveshaft_behind_bell+bell_h-bell_ceil;
+            cylinder(h=hstatic, r=static_shaft_od/2);
+            translate([0,0,-1])
+                cylinder(h=hstatic+2,r=driveshaft_od/2);
         }
-
-if(show_mount)
-    color("blue"){
+}
+ 
+module mount(){
         translate([0,0,-driveshaft_behind_bell]){
             difference(){
                 cylinder(h=mount_height,r=mount_od/2);
