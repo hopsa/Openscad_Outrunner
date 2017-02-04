@@ -7,16 +7,17 @@ fullmotor(
     driveshaft_od=4,
     bell_od=40,
     bell_h=15,
-    bell_wall=1,
-    bell_ceil=1,
-    driveshaft_behind_bell=10,
+    bell_wall=2.5,
+    bell_ceil=2,
+    driveshaft_behind_bell=18,
+    axle_holder_h=6,
     
-    static_shaft_od=6,
+    static_shaft_od=8,
     
     mount_od=40,
-    mount_height=8,
-    mount_thick=1,
-    mount_wall=2
+    mount_height=12,
+    mount_thick=2,
+    mount_wall=3
 );
 
 module fullmotor(
@@ -27,6 +28,7 @@ module fullmotor(
     bell_wall=1,//wall thickness of bell
     bell_ceil=1,//thickness of the bell top
     driveshaft_behind_bell=10,//protrusion behind bell
+    axle_holder_h=6,
     
     static_shaft_od=6,
     
@@ -42,7 +44,8 @@ module fullmotor(
              bell_h=bell_h,
              bell_wall=bell_wall,
              bell_ceil=bell_ceil,
-             driveshaft_behind_bell=driveshaft_behind_bell
+             driveshaft_behind_bell=driveshaft_behind_bell,
+             axle_holder_h=axle_holder_h
             );
     color("yellow")
         stator(
@@ -64,23 +67,32 @@ module fullmotor(
                 static_shaft_od=static_shaft_od);
 }
 
-module bell(driveshaft_h, driveshaft_od, bell_od, bell_h, bell_ceil, driveshaft_behind_bell){
-    intersection(){
-        difference() {
-            cylinder(h=bell_h, r=bell_od/2);
-               translate([0,0,-1])
-                    cylinder(h=bell_h, r=bell_od/2-bell_wall);
-            for (x=[0:5])
-                rotate([0,0,360/6*x])
-                    translate([10,0,-5])
-                        cylinder(h=30,r=4);
+module bell(driveshaft_h, driveshaft_od, bell_od, bell_h, bell_ceil, driveshaft_behind_bell,axle_holder_h){
+    union(){
+        intersection(){
+            difference() {
+                cylinder(h=bell_h, r=bell_od/2);
+                   translate([0,0,-1])
+                        cylinder(h=bell_h, r=bell_od/2-bell_wall);
+                for (x=[0:5])
+                    rotate([0,0,360/6*x])
+                        translate([10,0,-5])
+                            cylinder(h=30,r=4);
+            }
+            translate([0,0,-100+bell_h+bell_od/2-(bell_wall+bell_ceil)/3])
+                cylinder(h=100,r1=100,r2=0);
+            
         }
-        translate([0,0,-100+bell_h+bell_od/2-(bell_wall+bell_ceil)/2])
-            cylinder(h=100,r1=100,r2=0);
-        
-    }
-    translate([0,0,-driveshaft_behind_bell]){
-        cylinder(h=driveshaft_h, r=driveshaft_od/2); //driveshaft
+        translate([0,0,-driveshaft_behind_bell]){
+            cylinder(h=driveshaft_h, r=driveshaft_od/2); //driveshaft
+        }
+        translate([0,0,bell_h])
+            difference(){
+                cylinder(h=axle_holder_h,r=10/2);
+                    translate([0,0,axle_holder_h/2])
+                        rotate([90,0,0])
+                            cylinder(h=30,r=2.5/2);
+            }
     }
 }
 module stator(bell_od, bell_wall, bell_ceil, bell_h, driveshaft_od, driveshaft_behind_bell, static_shaft_od){
